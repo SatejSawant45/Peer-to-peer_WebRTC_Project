@@ -10,5 +10,5 @@ wss.on('connection',function connection(ws){
             console.log(message);
     });
 
-    // ws.send("something");
+    ws.send("something");
 });
