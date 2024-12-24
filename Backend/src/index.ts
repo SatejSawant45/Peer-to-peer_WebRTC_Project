@@ -4,7 +4,7 @@ const wss = new WebSocketServer({ port:8080 });
 
 let senderSocket: null | WebSocket= null;
 
-let recieverSocket:any = null;
+let recieverSocket: null | WebSocket = null;
 
 wss.on('connection',function connection(ws){
     ws.on('errror',console.error);
@@ -22,12 +22,23 @@ wss.on('connection',function connection(ws){
             }
             else if(message.type === "create-offer")
             {
-                recieverSocket.send(JSON.stringify({type:"offer", offer:message.offer}))
+                recieverSocket?.send(JSON.stringify({type:"offer", offer:message.offer}))
             }
+            else if(message.type==="create-answer")
+            {
+                senderSocket?.send(JSON.stringify({type:"offer",offer:message.offer}))
+            }
+
+            //identify as sender
+            // identify as reciever
+            // create offer
+            //create answer
+            // add ice candidate
+
 
 
             
     });
 
-    
+ 
 });
