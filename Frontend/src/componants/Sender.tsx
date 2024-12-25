@@ -18,6 +18,8 @@ export default function Sender()
         const offer = await pc.createOffer();   //sdp
 
         await pc.setLocalDescription(offer);
+
+        socket?.send(JSON.stringify({type:'createOffer',sdp:pc.localDescription}))
     }   
 
     return( 

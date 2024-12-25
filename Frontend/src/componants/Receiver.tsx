@@ -20,7 +20,7 @@ export default function Receiver()
 
                 await pc.setLocalDescription(answer);
 
-                socket.send(JSON.stringify({type:'createAnswer',  sdp:pc.localDescription}))
+                socket.send(JSON.stringify({type:'createAnswer',  sdp:pc.localDescription}));
 
 
             }
