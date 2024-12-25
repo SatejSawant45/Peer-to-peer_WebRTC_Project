@@ -8,19 +8,33 @@ export default function Sender()
         socket.onopen = ()=>{
             socket.send(JSON.stringify({type:'sender'}));
         }
+
+        setSocket(socket);
     },[]);
 
     async function startSendingVideo()
     {
         if(!socket) return;
-        //create an offer
-        const pc = new RTCPeerConnection();
         
-        const offer = await pc.createOffer();   //sdp
+        //create an offer
 
-        await pc.setLocalDescription(offer);
+        const pc = new RTCPeerConnection();
+        pc.onnegotiationneeded  = async() => {
+            console.log("onnegotiationneeded");
+            const offer = await pc.createOffer();   //sdp
+            await pc.setLocalDescription(offer);
+            socket?.send(JSON.stringify({type:'createOffer',sdp:pc.localDescription}))
 
-        socket?.send(JSON.stringify({type:'createOffer',sdp:pc.localDescription}))
+        }
+        
+
+        pc.onicecandidate = (event)=>{
+            console.log(event);
+            if(event.candidate){
+                socket?.send(JSON.stringify({type:'iceCandidate', candidate:event.candidate}));
+            }
+        }
+
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
@@ -29,7 +43,14 @@ export default function Sender()
             {
                 pc.setRemoteDescription(data.sdp);
             }
+            else if(data.type === 'iceCandidate'){
+                pc.addIceCandidate(data.candidate);
+            }
         }
+
+        const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true}); 
+        pc.addTrack(stream.getVideoTracks()[0]);
+        // pc.addTrack(stream.getAudioTracks()[0]);
     }   
 
     return( 
