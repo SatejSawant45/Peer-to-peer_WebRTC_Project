@@ -5,7 +5,7 @@ export default function Receiver()
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(()=>{
-        const socket = new WebSocket('ws://localhost:8080');
+        const socket = new WebSocket('ws://172.29.140.126:8080');
         socket.onopen = ()=>{
             socket?.send(JSON.stringify({type:'receiver'}));
         }
